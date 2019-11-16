@@ -1,0 +1,4 @@
+%This should be a sample matlab code in master branch
+
+A =[(1, 2; 3,4)];
+A
