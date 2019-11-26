@@ -1,8 +1,0 @@
-%This should be a sample matlab code in master branch
-
-A =[(1, 2; 2, 1; 5, 6)];
-A
-
-%This change was made in test_branch_1
-
-%another change in branch2, changed A
