@@ -6,15 +6,16 @@ r2 = 0.4;
 
 syms P(x,y) Q(x,y) R(x,y)
 %DGLs symbolisch angeben
-P(x,y) = y;
+P(x,y) = y;                         %erste Zeile math. Pendel linearisiert
 Q(x,y) = y*(-o)+x*(-r1);
 R(x,y) = -sin(x)+y*(-r2);
 
 %ermittelt Gleichgewichtspunkte
-S1 = solve([P(x,y)==0, Q(x,y)==0], [x y], 'ReturnConditions', true)
+S1 = solve([P(x,y)==0, Q(x,y)==0], [x,y], 'ReturnConditions', true);
 S2 = solve([P(x,y)==0, R(x,y)==0], [x,y], 'ReturnConditions', true);
 
 %gibt x-, y-Koordinaten von bis zu fünf Gleichgewichtspunkten
+S2.x
 solx1 = subs(S1.x, S1.parameters, [-2 -1 0 1 2]);
 soly1 = subs(S1.y, S1.parameters, [-2 -1 0 1 2]);
 
