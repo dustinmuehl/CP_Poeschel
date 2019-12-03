@@ -1,12 +1,22 @@
 %Parameter, die in den DGLs variiert werden kÃ¶nnen
-p1 = 3;
+p1 = 2;
 w1 = 9;
 p2 = 1;
 
+% Jacobi-Matrizen der Systeme
 A = [0 1; -w1 -p1];
 B1 = [0 1, -1 -p2];
 B2 = [0 1, +1 -p2];
-[V1,D1] = eig(A);
+% C = [];
+% E = [];
+
+%VA ist Matrix der Eigenvektoren zu A, DA ist Matrix der Eigenwerte zu A
+[VA,DA] = eig(A);
+% [VB1,DB1] = eig(B1)
+% [VB2,DB2] = eig(B1)
+% [VC, DC] = eig(C)
+% [VE, BE] = eig(E)
+
 
 %Definition der DGL-Systeme in symbolischer Weise, hier in Vektorform. Ein
 %Vektoreintrag entspricht einer Gleichung/Zeile des Systems
@@ -65,8 +75,14 @@ plot(solx1, soly1, 'o');
 hold on
 %LÃ¶sungskurve
 plot(y1(:,1),y1(:,2))
-plot([solx1-3*V1(1,1) solx1+ 3*V1(1,1)],[soly1-3*V1(2,1) soly1+3*V1(2,1)])
-plot([solx1-3*V1(1,2) solx1+ 3*V1(1,2)],[soly1-3*V1(2,2) soly1+3*V1(2,2)])
+% Überprüfen ob Eigenwerte reell sind
+if abs(imag(DA(1,1))) < 0.001
+    % Plotten der Eigenvektoren an Gleichgewichtspunkt
+    plot([solx1-3*VA(1,1) solx1+ 3*VA(1,1)],[soly1-3*VA(2,1) soly1+3*VA(2,1)])
+end
+if abs(imag(DA(2,2))) < 0.001
+    plot([solx1-3*VA(1,2) solx1+ 3*VA(1,2)],[soly1-3*VA(2,2) soly1+3*VA(2,2)])
+end
 
 %zweite DGL
 %Richtungsfeld
@@ -80,6 +96,10 @@ plot(solx2, soly2, 'o');
 hold on
 %LÃ¶sungskurve
 plot(y2(:,1),y2(:,2))
+
+
+
+% Platzhalter für andere Systeme
 
 subplot(2,2,3),q2=quiver(X,Y,dX2n,dY2n, 0.5);
 q2.Color = '#DEDEDE';
