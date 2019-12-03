@@ -1,14 +1,18 @@
 %Parameter, die in den DGLs variiert werden können
-o = 0.3;
-r1 = 0.6;
-r2 = 0.5;
-mu = 0.1
+p1 = 3;
+w1 = 9;
+p2 = 1;
+
+A = [0 1; -w1 -p1];
+B1 = [0 1, -1 -p2];
+B2 = [0 1, +1 -p2];
+[V1,D1] = eig(A);
 
 %Definition der DGL-Systeme in symbolischer Weise, hier in Vektorform. Ein
 %Vektoreintrag entspricht einer Gleichung/Zeile des Systems
 syms t dgl1(x,y)
-dgl1(x,y) = [y; y*(-o)+x*(-r1)];
-dgl2(x,y) = [y; mu*(1-x^2)*y-x];
+dgl1(x,y) = [y; y*(-p1)+x*(-w1)];
+dgl2(x,y) = [y; -sin(x) - p2 *y];
 
 %findet Gleichgewichtspunkte durch Nullsetzen der DGL
 S1 = solve(dgl1(x,y)==0, [x y], 'ReturnConditions', true);
@@ -29,7 +33,7 @@ d2=dgl2(X,Y);
 
 %normieren (durch die geschweiften Klammern wird die erste bzw. zweite
 %Gleichung des Systems aufgerufen)
-dX1n = d1{1}./sqrt(d{1}.^2+d1{2}.^2);
+dX1n = d1{1}./sqrt(d1{1}.^2+d1{2}.^2);
 dY1n = d1{2}./sqrt(d1{1}.^2+d1{2}.^2);
 
 dX2n = d2{1}./sqrt(d2{1}.^2+d2{2}.^2);
@@ -43,16 +47,17 @@ fun2 = matlabFunction(dgl2,'Vars',{t,[x;y]});
 %löst DGL, zweites Argument sind Werte für t, drittes die Startkoordinaten.
 %Durch Ausprobieren muss bestimmt werden, welche Startkoordinaten ein gutes
 %Bild ergeben
-[t1,y1] = ode45(fun1,[0 20],[0 9]);
+[t1,y1] = ode45(fun1,[0 20],[-4 6]);
 [t2,y2] = ode45(fun2,[0 20],[2 0]);
 
 
 figure;
 %erste DGL
 %Richtungsfeld
-subplot(1,2,1),q=quiver(X,Y,dX1n,dY1n);
+subplot(2,2,1),q=quiver(X,Y,dX1n,dY1n, 0.5);
 q.Color = '#DEDEDE';
 q.ShowArrowHead = 'off';
+
 axis([-10 10 -10 10])
 hold on
 %GG-Punkte
@@ -60,10 +65,12 @@ plot(solx1, soly1, 'o');
 hold on
 %Lösungskurve
 plot(y1(:,1),y1(:,2))
+plot([solx1-3*V1(1,1) solx1+ 3*V1(1,1)],[soly1-3*V1(2,1) soly1+3*V1(2,1)])
+plot([solx1-3*V1(1,2) solx1+ 3*V1(1,2)],[soly1-3*V1(2,2) soly1+3*V1(2,2)])
 
 %zweite DGL
 %Richtungsfeld
-subplot(1,2,2),q2=quiver(X,Y,dX2n,dY2n);
+subplot(2,2,2),q2=quiver(X,Y,dX2n,dY2n, 0.5);
 q2.Color = '#DEDEDE';
 q2.ShowArrowHead = 'off';
 axis([-10 10 -10 10])
@@ -74,6 +81,27 @@ hold on
 %Lösungskurve
 plot(y2(:,1),y2(:,2))
 
+subplot(2,2,3),q2=quiver(X,Y,dX2n,dY2n, 0.5);
+q2.Color = '#DEDEDE';
+q2.ShowArrowHead = 'off';
+axis([-10 10 -10 10])
+hold on
+%GG-Punkte
+plot(solx2, soly2, 'o');
+hold on
+%Lösungskurve
+plot(y2(:,1),y2(:,2))
+
+subplot(2,2,4),q2=quiver(X,Y,dX2n,dY2n, 0.5);
+q2.Color = '#DEDEDE';
+q2.ShowArrowHead = 'off';
+axis([-10 10 -10 10])
+hold on
+%GG-Punkte
+plot(solx2, soly2, 'o');
+hold on
+%Lösungskurve
+plot(y2(:,1),y2(:,2))
 
 
 
