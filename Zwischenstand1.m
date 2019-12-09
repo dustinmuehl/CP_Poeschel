@@ -1,9 +1,9 @@
-%Parameter, die in den DGLs variiert werden kÃ¶nnen
+%Parameter, die in den DGLs variiert werden koennen
 p1 = 7;
 w1 = 9;
 p2 = 3;
-m1=1;   %=mü 3.DGL
-m2=1;   %=mü 4.DGL
+m1=1;   %=mue 3.DGL
+m2=1;   %=mue 4.DGL
 
 % Jacobi-Matrizen der Systeme
 A = [0 1; -w1 -p1];
@@ -78,7 +78,7 @@ plot(solx1, soly1, 'o');
 hold on
 %Loesungskurve
 plot(y1(:,1),y1(:,2))
-% Überprüfen ob Eigenwerte reell sind
+% Ueberpruefen ob Eigenwerte reell sind
 if abs(imag(DA(1,1))) < 0.001
     % Plotten der Eigenvektoren an Gleichgewichtspunkt
     plot([solx1-3*VA(1,1) solx1+ 3*VA(1,1)],[soly1-3*VA(2,1) soly1+3*VA(2,1)])
@@ -117,7 +117,7 @@ end
 
 
 
-% Platzhalter für andere Systeme
+% Platzhalter fuer andere Systeme
 
 subplot(2,2,3),q2=quiver(X,Y,dX2n,dY2n, 0.5);
 q2.Color = '#DEDEDE';
