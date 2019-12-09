@@ -2,16 +2,16 @@
 p1 = 7;
 w1 = 9;
 p2 = 3;
-m1=1;
-m2=1;
+m1=1;   %=mü 3.DGL
+m2=1;   %=mü 4.DGL
 
 % Jacobi-Matrizen der Systeme
 A = [0 1; -w1 -p1];
 B1 = [0 1; -1 -p2];
 B2 = [0 1; +1 -p2];
-syms f
-C = [m1-3*f^2 0; 0 -1];
-E = [(-3*m2^2)*(f^2+2*f-1)-5*f^4-12*f^3+18*f^2+18*f-9 0; 0 -1];
+syms z
+C = [m1-3*z^2 0; 0 -1];
+E = [m2^3 - 3*m2^2*z*(2+z) + 3*m2*(-1+z^2) + z*18 + 9*z - 12*z^2 - 5*z^3 0; 0 -1];
 
 %VA ist Matrix der Eigenvektoren zu A, DA ist Matrix der Eigenwerte zu A
 [VA,DA] = eig(A);
