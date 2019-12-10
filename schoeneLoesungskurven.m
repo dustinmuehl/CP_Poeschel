@@ -2,9 +2,9 @@
 %z.B.: Sattel p1=2,w1=1; stabiler Strudel 0.5,1; instabiler Strudel -0.5,1
 p1 = 2;
 w1 = 1;
-p2 = 0.5;
-m1=2;
-m2=1;
+p2 = 3;
+m1 = 2;
+m2 = 1;
 
 % Jacobi-Matrizen der Systeme
 A = [0 1; -w1 -p1];
@@ -17,8 +17,8 @@ E = [m2^3 - 3*m2^2*z*(2+z) + 3*m2*(-1+z^2) + z*18 + 9*z - 12*z^2 - 5*z^3 0; 0 -1
 %VA ist Matrix der Eigenvektoren zu A, DA ist Matrix der Eigenwerte zu A
 [VA,DA] = eig(A);
 [VB1,DB1] = eig(B1);
-[VB2,DB2] = eig(B1);
-% [VC, DC] = eig(C)
+[VB2,DB2] = eig(B2);
+[VC, DC] = eig(C);
 % [VE, BE] = eig(E)
 
 
@@ -97,17 +97,17 @@ sz1 = size(solx1);
 if abs(imag(DA(1,1))) < 0.001
     % Plotten der Eigenvektoren an Gleichgewichtspunkt (Fall Sattel)
     for i = 1:sz1(2)
-        plot([solx1(i)-2*VA(1,1) solx1(i)+ 2*VA(1,1)],[soly1(i)-2*VA(2,1) soly1(i)+2*VA(2,1)])
+        plot([solx1(i)-2*VA(1,1) solx1(i)+ 2*VA(1,1)],[soly1(i)-2*VA(2,1) soly1(i)+2*VA(2,1)], 'b','LineWidth',1.3)
     end
     %errechnen und plotten der Loesungskurven
     [t1,y1] = ode45(fun1,[0 20],[-5 10]);
-    plot(y1(:,1),y1(:,2))
+    plot(y1(:,1),y1(:,2), 'g')
     [t1,y1] = ode45(fun1,[0 20],[5 10]);
-    plot(y1(:,1),y1(:,2))
+    plot(y1(:,1),y1(:,2), 'g')
     [t1,y1] = ode45(fun1,[0 20],[-5 -10]);
-    plot(y1(:,1),y1(:,2))
+    plot(y1(:,1),y1(:,2), 'g')
     [t1,y1] = ode45(fun1,[0 20],[5 -10]);
-    plot(y1(:,1),y1(:,2))
+    plot(y1(:,1),y1(:,2), 'g')
 
 elseif real(DA(1,1)) > 0
     %Fall instabiler Strudel
@@ -122,7 +122,7 @@ end
 
 if abs(imag(DA(2,2))) < 0.001
     for i = 1:sz1(2)
-        plot([solx1(i)-2*VA(1,2) solx1(i)+ 2*VA(1,2)],[soly1(i)-2*VA(2,2) soly1(i)+2*VA(2,2)])
+        plot([solx1(i)-2*VA(1,2) solx1(i)+ 2*VA(1,2)],[soly1(i)-2*VA(2,2) soly1(i)+2*VA(2,2)], 'b','LineWidth',1.3)
     end
 end
 
@@ -140,28 +140,44 @@ hold on
 
 sz2 = size(solx2);
 if abs(imag(DB1(1,1))) < 0.001
-    % Plotten der Eigenvektoren an Gleichgewichtspunkt
-    for i = 1:sz2(2)
-        plot([solx2(i)-2*VB1(1,1) solx2(i)+ 2*VB1(1,1)],[soly2(i)-2*VB1(2,1) soly2(i)+2*VB1(2,1)])
-    end
     %Loesungskurve
-    [t2,y2] = ode45(fun2,[0 20],[-3 3]);
+    [t2,y2] = ode45(fun2,[0 20],[-5 10]);
+    plot(y2(:,1),y2(:,2))
+    [t2,y2] = ode45(fun2,[0 20],[5 10]);
+    plot(y2(:,1),y2(:,2))
+    [t2,y2] = ode45(fun2,[0 20],[-5 -10]);
+    plot(y2(:,1),y2(:,2))
+    [t2,y2] = ode45(fun2,[0 20],[5 -10]);
     plot(y2(:,1),y2(:,2))
 else
     %Fall imaginaere Eigenwerte
     [tim,yim] = ode45(fun2,[0 20],[double(solx2(2)) double(soly2(2))+0.0001]);
-    plot(yim(:,1),yim(:,2))
+    plot(yim(:,1),yim(:,2), 'g')
     [tim,yim] = ode45(fun2,[0 20],[double(solx2(2)) double(soly2(2))-0.0001]);
-    plot(yim(:,1),yim(:,2))
+    plot(yim(:,1),yim(:,2), 'g')
     [tim,yim] = ode45(fun2,[0 20],[double(solx2(4)) double(soly2(4))+0.0001]);
-    plot(yim(:,1),yim(:,2))
+    plot(yim(:,1),yim(:,2), 'g')
     [tim,yim] = ode45(fun2,[0 20],[double(solx2(4)) double(soly2(4))-0.0001]);
-    plot(yim(:,1),yim(:,2))
+    plot(yim(:,1),yim(:,2), 'g')
 end
-if abs(imag(DB1(2,2))) < 0.001
-    for i = 1:sz2(2)
-        plot([solx2(i)-2*VB1(1,2) solx2(i)+ 2*VB1(1,2)],[soly2(i)-2*VB1(2,2) soly2(i)+2*VB1(2,2)])
-    end
+
+
+for i = 1:sz2(2)
+   if floor(solx2(i)/(2*pi)) == solx2(i)/(2*pi)
+       if abs(imag(DB1(1,1))) < 0.001
+           plot([solx2(i)-2*VB1(1,1) solx2(i)+ 2*VB1(1,1)],[soly2(i)-2*VB1(2,1) soly2(i)+2*VB1(2,1)], 'b','LineWidth',1.3)
+       end
+       if abs(imag(DB1(2,2))) < 0.001
+           plot([solx2(i)-2*VB1(1,2) solx2(i)+ 2*VB1(1,2)],[soly2(i)-2*VB1(2,2) soly2(i)+2*VB1(2,2)], 'b','LineWidth',1.3)
+       end
+   else
+       if abs(imag(DB2(1,1))) < 0.001
+           plot([solx2(i)-2*VB2(1,1) solx2(i)+ 2*VB2(1,1)],[soly2(i)-2*VB2(2,1) soly2(i)+2*VB2(2,1)], 'b','LineWidth',1.3)
+       end
+       if abs(imag(DB2(2,2))) < 0.001
+           plot([solx2(i)-2*VB2(1,2) solx2(i)+ 2*VB2(1,2)],[soly2(i)-2*VB2(2,2) soly2(i)+2*VB2(2,2)], 'b','LineWidth',1.3)
+       end
+   end
 end
 
 
@@ -180,9 +196,8 @@ hold on
 plot(solx3, soly3, 'o');
 hold on
 %Loesungskurve
-[t3,y3] = ode45(fun3,[0 20],[2 0]);
-plot(y3(:,1),y3(:,2))
-
+[t3,y3] = ode45(fun3,[0 20],[1.51 0]);
+plot(y3(:,1),y3(:,2), 'g')
 
 %vierte DGL
 
@@ -197,4 +212,4 @@ plot(solx4, soly4, 'o');
 hold on
 %Loesungskurve
 [t4,y4] = ode45(fun4,[0 20],[2 0]);
-plot(y4(:,1),y4(:,2))
+plot(y4(:,1),y4(:,2), 'g')
