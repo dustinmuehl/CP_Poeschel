@@ -1,0 +1,21 @@
+
+
+Namen DGL-Systeme
+
+Beginnend von rechts:
+6. Entarteter Knoten mit EW Null
+4.1 Entarteter instabiler Knoten, nicht diagonalisierbar
+4.2 Entarteter instabiler Knoten, diagonalisierbar
+5.1 Entarteter stabiler Knoten, nicht diagonalisierbar
+5.2 Entarteter stabiler Knoten, diagonalisierbar
+2.11 Lineare Expansion, mu=0
+3.12 Lineare Kontraktion, mu=0
+3.11 Lineare Expansion, lambda=0
+3.12 Lineare Kontraktion, lambda=0
+1.2 Sattel, lambda positiv
+1.1 Sattel, mu positiv
+3 instab_Knoten
+2 stab_Knoten
+7 Zentrum
+8.2 instab_Strudel
+8.1 stab_Strudel
