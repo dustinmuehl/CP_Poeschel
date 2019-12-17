@@ -47,20 +47,31 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
                     [A, B1, B2, R] = fkt_Sattel(INPUTS);
                 else
                     if lambda > 0
-                        [A, B1, B2, R] = fkt_instab_Knoten(INPUTS);
+                        [A, B1, B2] = fkt_Knoten(INPUTS);
+                        R = -1; %instabil
                     else
-                        [A, B1, B2, R] = fkt_stab_Knoten(INPUTS);
+                        [A, B1, B2] = fkt_Knoten(INPUTS);
+                        R = 1; %stabil
                     end
                 end
                 
             else %lambda imaginaer
                 if abs(real(lambda)) < 0.001
-                    [A, B1, B2, R] = fkt_Zentrum(INPUTS);
+                    A = fkt_Zentrum(INPUTS);
+                    R = 1;
+                    B1 = 0;
+                    B2 = 0;
                 else
                     if real(lambda) > 0
-                        [A, B1, B2, R] = fkt_instab_Strudel(INPUTS);
+                        A = fkt_Strudel(INPUTS);
+                        R = -1; %instabil
+                        B1 = 0;
+                        B2 = 0;
                     else
-                        [A, B1, B2, R] = fkt_stab_Strudel(INPUTS);
+                        A = fkt_Strudel(INPUTS);
+                        R = 1; %stabil
+                        B1 = 0;
+                        B2 = 0;
                     end
                 end
             end
