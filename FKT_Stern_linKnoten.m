@@ -1,7 +1,7 @@
 %%
 function [A, B1, B2] = fkt_lin_Knoten(xWert, yWert, EV0)
     B1 = [xWert+3*EV0(1) xWert-3*EV0(1); yWert+3*EV0(2) yWert-3*EV0(2)];
-    B2 = [0 0; 0 0]; %nur ein Eigenraum
+    B2 = 0; %nur ein Eigenraum
     
     if EV0(1) == 0
         k = 0.1;
@@ -34,6 +34,6 @@ function [A, B1, B2] = fkt_Stern(xWert,yWert)
 
     A = [a1 a2 a3 a4 a5 a6 a7 a8];
     % kein Eigenraum
-    B1 = [0 0; 0 0];
-    B2 = [0 0; 0 0];
+    B1 = 0;
+    B2 = 0;
 end
