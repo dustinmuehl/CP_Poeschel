@@ -14,7 +14,7 @@ close all
 %%
 %Input
 %Input Parameter
-p1 = 2;
+p1 = 0.5;
 w1 = 1;
 p2 = 3;
 m1 = 2;
@@ -131,7 +131,7 @@ for i = 1:size(solx1,1)
     end
     
     for j = 1:size(AWerte,2) 
-        [t,y] = ode45(fun1,[0 20*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
+        [t,y] = ode45(fun1,[0 10*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
         plot(y(:,1),y(:,2), FC)
     end
     
@@ -150,41 +150,41 @@ end
 
 
 % %zweiter Plot
-% subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
-% q1.Color = '#DEDEDE';
-% q1.ShowArrowHead = 'off';
-% title('DGL 2')
-% axis([-10 10 -10 10])
-% hold on
-% %GG-Punkte
-% plot(solx2, soly2, 'o');
-% hold on
-% %Loesungen und Eigenraume 
-% %(fehlt noch: Spezifikation im Fall Sattel)
-% for i = 1:size(solx2,1)
-%     Matrix = subs(B, x, solx2(i));
-%     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx2(i), soly2(i));
-%     %Startwerte plotten
-%     if Farbe == 1       %konvergiert nach innen
-%         FC = 'r';
-%     elseif Farbe == -1  %divergiert nach ausssen
-%         FC = 'g';
-%     end
-%     
-%     for j = 1:size(AWerte,2) 
-%         [t,y] = ode45(fun1,[0 20*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
-%         plot(y(:,1),y(:,2), FC)
-%     end
-%     
-%     
-%     %Eigenraeume plotten falls notwendig
-%     if ERaum1 ~= 0
-%         plot(ERaum1(1,:),ERaum1(2,:))
-%     end
-%     if ERaum2 ~= 0
-%         plot(ERaum2(1,:),ERaum2(2,:))
-%     end
-% end
+subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
+q1.Color = '#DEDEDE';
+q1.ShowArrowHead = 'off';
+title('DGL 2')
+axis([-10 10 -10 10])
+hold on
+%GG-Punkte
+plot(solx2, soly2, 'o');
+hold on
+%Loesungen und Eigenraume 
+%(fehlt noch: Spezifikation im Fall Sattel)
+for i = 1:size(solx2,1)
+    Matrix = subs(B, x, solx2(i));
+    [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx2(i), soly2(i));
+    %Startwerte plotten
+    if Farbe == 1       %konvergiert nach innen
+        FC = 'r';
+    elseif Farbe == -1  %divergiert nach ausssen
+        FC = 'g';
+    end
+    
+    for j = 1:size(AWerte,2) 
+        [t,y] = ode45(fun1,[0 20*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
+        plot(y(:,1),y(:,2), FC)
+    end
+    
+    
+    %Eigenraeume plotten falls notwendig
+    if ERaum1 ~= 0
+        plot(ERaum1(1,:),ERaum1(2,:))
+    end
+    if ERaum2 ~= 0
+        plot(ERaum2(1,:),ERaum2(2,:))
+    end
+end
 
 
 
@@ -277,90 +277,118 @@ end
 
 %entartete Fälle, dh doppelte EW
 
-
+function A = fkt_Scherung(xValue,yValue,k)
+    a1 = [xValue-k; yValue+k];
+    a2 = [xValue-2*k; yValue+2*k];
+    a3 = [xValue-3*k; yValue+3*k];
+    a4 = [xValue+k; yValue-k];
+    a5 = [xValue+2*k; yValue-2*k];
+    a6 = [xValue+3*k; yValue-3*k];
+    A = [a1 a2 a3 a4 a5 a6];
+end
 
 
 %entartete Knoten, dh det=0
+function [A,B1,B2]=fkt_ent_Knoten(VJ,WJ,xValue,yValue,k,d)    
+    
+    if WJ(1,1)<0
+    c = 0.66*k;
+    a1 = [xValue+c*VJ(1,1)-d; yValue+c*VJ(2,1)-d];
+    a2 = [xValue+2*c*VJ(1,1)-d; yValue+2*c*VJ(2,1)-d];
+    a3 = [xValue+3*c*VJ(1,1)-d; yValue+3*c*VJ(2,1)-d];
+    a4 = [xValue-c*VJ(1,1)+d; yValue-c*VJ(2,1)+d];
+    a5 = [xValue-2*c*VJ(1,1)+d; yValue-2*c*VJ(2,1)+d];
+    a6 = [xValue-3*c*VJ(1,1)+d; yValue-3*c*VJ(2,1)+d];
+    A = [a1 a2 a3 a4 a5 a6];
+    else
+    a1 = [xValue+k*VJ(1,1)+d; yValue+k*VJ(2,1)+d];
+    a2 = [xValue+k*VJ(1,1)-d; yValue+k*VJ(2,1)-d];
+    a3 = [xValue-k*VJ(1,1)+d; yValue-k*VJ(2,1)+d];
+    a4 = [xValue-k*VJ(1,1)-d; yValue-k*VJ(2,1)-d];
+    a5 = [xValue+2*k*VJ(1,1)+d; yValue+2*k*VJ(2,1)+d];
+    a6 = [xValue+2*k*VJ(1,1)-d; yValue+2*k*VJ(2,1)-d];
+    a7 = [xValue-2*k*VJ(1,1)+d; yValue-2*k*VJ(2,1)+d];
+    a8 = [xValue-2*k*VJ(1,1)-d; yValue-2*k*VJ(2,1)-d];
+    A = [a1 a2 a3 a4 a5 a6 a7 a8];
+    end
+     B1 = [xValue-3*(VJ(1,1)/norm(VJ(:,1))) xValue+3*(VJ(1,1)/norm(VJ(:,1))); 
+          yValue-3*(VJ(2,1)/norm(VJ(:,1))) yValue+3*(VJ(2,1)/norm(VJ(:,1)))]; 
+    B2 =  0;
+end
 
 
 
 %reele EW
-function [A,B1,B2,R] = fkt_Sattel(VJ,WJ,xValue,yValue,r,k)
-    a1 = [xValue+k*VJ(1,1)+r yValue+k*VJ(2,1)+r];
-    a2 = [xValue+k*VJ(1,1)+r yValue+k*VJ(2,1)-r];
-    a3 = [xValue+k*VJ(1,1)-r yValue+k*VJ(2,1)+r];
-    a4 = [xValue+k*VJ(1,1)-r yValue+k*VJ(2,1)-r];
-    a5 = [xValue-k*VJ(1,1)+r yValue-k*VJ(2,1)+r];
-    a6 = [xValue-k*VJ(1,1)+r yValue-k*VJ(2,1)-r];
-    a7 = [xValue-k*VJ(1,1)-r yValue-k*VJ(2,1)+r];
-    a8 = [xValue-k*VJ(1,1)-r yValue-k*VJ(2,1)-r];
-    A = [a1; a2; a3; a4; a5; a6; a7; a8];
-    B1 = VJ(:,1); 
-    B2 = VJ(:,2);
-if WJ(1,1) < WJ(2,2)
-    R=1;
-else
-    R=-1;
-end   
+function [A,B1,B2,R] = fkt_Sattel(VJ,WJ,xValue,yValue,k,d)
+    if WJ(1,1)>WJ(2,2)
+        R = -1;
+    else
+        R = 1;
+    end
+    a1 = [xValue+k*VJ(1,1)+d; yValue+k*VJ(2,1)+d];
+    a2 = [xValue+k*VJ(1,1)+d; yValue+k*VJ(2,1)-d];
+    a3 = [xValue+k*VJ(1,1)-d; yValue+k*VJ(2,1)+d];
+    a4 = [xValue+k*VJ(1,1)-d; yValue+k*VJ(2,1)-d];
+    a5 = [xValue-k*VJ(1,1)+d; yValue-k*VJ(2,1)+d];
+    a6 = [xValue-k*VJ(1,1)+d; yValue-k*VJ(2,1)-d];
+    a7 = [xValue-k*VJ(1,1)-d; yValue-k*VJ(2,1)+d];
+    a8 = [xValue-k*VJ(1,1)-d; yValue-k*VJ(2,1)-d];
+    A = [a1 a2 a3 a4 a5 a6 a7 a8];
+    B1 = [xValue-3*(VJ(1,1)/norm(VJ(:,1))) xValue+3*(VJ(1,1)/norm(VJ(:,1))); 
+          yValue-3*(VJ(2,1)/norm(VJ(:,1))) yValue+3*(VJ(2,1)/norm(VJ(:,1)))]; 
+    B2 = [xValue-3*(VJ(1,2)/norm(VJ(:,2))) xValue+3*(VJ(1,2)/norm(VJ(:,2))); 
+          yValue-3*(VJ(2,2)/norm(VJ(:,2))) yValue+3*(VJ(2,2)/norm(VJ(:,2)))]; 
 end
 
 
-% function [A,B1,B2]=fkt_Knoten(VJ,WJ,xValue,yValue,k,r)
+% Knoten zwei EW
+function [A,B1,B2]=fkt_Knoten(VJ,WJ,xValue,yValue,k,d)
+    if WJ(1,1)>WJ(2,2)
+    a1 = [xValue+k*VJ(1,1)+d; yValue+k*VJ(2,1)+d];
+    a2 = [xValue+k*VJ(1,1)-d; yValue+k*VJ(2,1)-d];
+    a3 = [xValue-k*VJ(1,1)+d; yValue-k*VJ(2,1)+d];
+    a4 = [xValue-k*VJ(1,1)-d; yValue-k*VJ(2,1)-d];
+    a5 = [xValue+2*k*VJ(1,1)+d; yValue+2*k*VJ(2,1)+d];
+    a6 = [xValue+2*k*VJ(1,1)-d; yValue+2*k*VJ(2,1)-d];
+    a7 = [xValue-2*k*VJ(1,1)+d; yValue-2*k*VJ(2,1)+d];
+    a8 = [xValue-2*k*VJ(1,1)-d; yValue-2*k*VJ(2,1)-d];
+    else
+    a1 = [xValue+k*VJ(1,2)+d; yValue+k*VJ(2,2)+d];
+    a2 = [xValue+k*VJ(1,2)-d; yValue+k*VJ(2,2)-d];
+    a3 = [xValue-k*VJ(1,2)+d; yValue-k*VJ(2,2)+d];
+    a4 = [xValue-k*VJ(1,2)-d; yValue-k*VJ(2,2)-d];
+    a5 = [xValue+2*k*VJ(1,2)+d; yValue+2*k*VJ(2,2)+d];
+    a6 = [xValue+2*k*VJ(1,2)-d; yValue+2*k*VJ(2,2)-d];
+    a7 = [xValue-2*k*VJ(1,2)+d; yValue-2*k*VJ(2,2)+d];
+    a8 = [xValue-2*k*VJ(1,2)-d; yValue-2*k*VJ(2,2)-d];
+    end
+    A = [a1 a2 a3 a4 a5 a6 a7 a8];
+    B1 = [xValue-3*(VJ(1,1)/norm(VJ(:,1))) xValue+3*(VJ(1,1)/norm(VJ(:,1))); 
+          yValue-3*(VJ(2,1)/norm(VJ(:,1))) yValue+3*(VJ(2,1)/norm(VJ(:,1)))]; 
+    B2 = [xValue-3*(VJ(1,2)/norm(VJ(:,2))) xValue+3*(VJ(1,2)/norm(VJ(:,2))); 
+          yValue-3*(VJ(2,2)/norm(VJ(:,2))) yValue+3*(VJ(2,2)/norm(VJ(:,2)))];
+end
 % end
 
-function [A,B1,B2] = fkt_Knoten(J,xValue,yValue,k,r)
-% J ist die Jacobi Determinante
-% xValue und yValue sind die Koordinaten des GG-Punkts
-% k ist der Wert, mit dem der Eigenvektor multipliziert wird (guter Wert: 5)
-% r ist der Wert, um den der Punkt dann verschoben wird (guter Wert: 2)
-%
-% Ausgabe: 8x2 Matrix, wobei eine Zeile aus x und y-Wert des Startpunkts
-%           besteht
-
-    [VJ,WJ] = eig(J);
-        if abs(imag(WJ(1,1))) < 0.001
-            if abs(WJ(1,1)) < abs(WJ(2,2))
-                a1 = [xValue+k*VJ(1,1)+r yValue+k*VJ(1,2)+r];
-                a2 = [xValue+k*VJ(1,1)+r yValue+k*VJ(1,2)-r];
-                a3 = [xValue+k*VJ(1,1)-r yValue+k*VJ(1,2)+r];
-                a4 = [xValue+k*VJ(1,1)-r yValue+k*VJ(1,2)-r];
-                a5 = [xValue-k*VJ(1,1)+r yValue-k*VJ(1,2)+r];
-                a6 = [xValue-k*VJ(1,1)+r yValue-k*VJ(1,2)-r];
-                a7 = [xValue-k*VJ(1,1)-r yValue-k*VJ(1,2)+r];
-                a8 = [xValue-k*VJ(1,1)-r yValue-k*VJ(1,2)-r];
-            else
-                a1 = [xValue+k*VJ(2,1)+r yValue+k*VJ(2,2)+r];
-                a2 = [xValue+k*VJ(2,1)+r yValue+k*VJ(2,2)-r];
-                a3 = [xValue+k*VJ(2,1)-r yValue+k*VJ(2,2)+r];
-                a4 = [xValue+k*VJ(2,1)-r yValue+k*VJ(2,2)-r];
-                a5 = [xValue-k*VJ(2,1)+r yValue-k*VJ(2,2)+r];
-                a6 = [xValue-k*VJ(2,1)+r yValue-k*VJ(2,2)-r];
-                a7 = [xValue-k*VJ(2,1)-r yValue-k*VJ(2,2)+r];
-                a8 = [xValue-k*VJ(2,1)-r yValue-k*VJ(2,2)-r];
-            end
-            A = [a1; a2; a3; a4; a5; a6; a7; a8];
-        end
-    B1 = [xValue-3*VJ(1,1) xValue+3*VJ(1,1) ; yValue-3*VJ(1,2) yValue+3*VJ(1,2)];
-    B2 = [xValue+3*VJ(2,1) xValue-3*VJ(2,1) ; yValue+3*VJ(2,2) yValue-3*VJ(2,2)];
-end
 
 
 % komplexe EW
-function [A] = fkt_Zentrum(xValue,yValue,a)
-    a1 = [xValue+a yValue];
-    a2 = [xValue+2*a yValue];
-    a3 = [xValue+3*a yValue];
-    a4 = [xValue+4*a yValue];
-    a5 = [xValue+5*a yValue];
-    A = [a1; a2; a3; a4; a5];
+function [A] = fkt_Zentrum(xValue,yValue,d)
+    a1 = [xValue; yValue+d];
+    a2 = [xValue; yValue+2*d];
+    a3 = [xValue; yValue+3*d];
+    a4 = [xValue; yValue+4*d];
+    a5 = [xValue; yValue+5*d];
+    A = [a1 a2 a3 a4 a5];
 end
 
 function [A] = fkt_Strudel(xValue,yValue,r)
-        A = [xValue+r yValue];
+        A = [xValue; yValue+r];
 end
 
 function [A, B1, B2] = fkt_lin_Knoten(xWert, yWert, EV0)
-    B1 = [xWert+3*EV0(1) xWert-3*EV0(1); yWert+3*EV0(2) yWert-3*EV0(2)];
+    B1 = [xWert+3*(EV0(1)/norm(EV0)) xWert-3*(EV0(1)/norm(EV0));
+        yWert+3*(EV0(2)/norm(EV0)) yWert-3*(EV0(2)/norm(EV0))];
     B2 = 0; %nur ein Eigenraum
     
     if EV0(1) == 0
@@ -411,26 +439,29 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     
     if mu == lambda
         if mu * lambda == 0
-            [A, B1, B2, R] = fkt_entar_Knoten_EW0(INPUTS);
+            [A, B1, B2, R] = fkt_Scherung(xWert, yWert, 2);
         else
             if lambda > 0
                 if rank(VJ) == 1
                     %entartet, instab Knoten, nicht diagonalisierbar
-                    [A, B1, B2] = fkt_Stern(xWert, yWert);
-                    R = -1;
+                    [A, B1, B2] = fkt_ent_Knoten(VJ,DJ,xWert,yWert,0.2,0.05);
+                    R = 1;
+                    
                 else
-                    %entartet, stab Knoten, diagonalisierbar
-                    [A, B1, B2, R] = fkt_ent_Knoten(INPUTS);
+                    %entartet, instab Knoten, diagonalisierbar 
+                    [A, B1, B2] = fkt_Stern(xWert, yWert);
+                    R = 1;
                 end
             else
                 if rank(VJ) == 1
                     %entartet, stab Knoten, nicht diagonalisierbar
-                    [A, B1, B2] = fkt_Stern(xWert, yWert);
-                    R = 1;
+                    [A, B1, B2] = fkt_ent_Knoten(VJ,DJ,xWert,yWert,0.2,0.05);
+                    R = -1;
+                   
                 else
                     %entartet, stab Knoten, diagonalisierbar
-                    [A, B1, B2] = fkt_ent_Knoten(INPUTS);
-                    R = 1;
+                    [A, B1, B2] = fkt_Stern(xWert, yWert);
+                    R = -1;
                 end
             end
         end
@@ -464,36 +495,36 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
         else
             if abs(imag(lambda)) < 0.001
                 if lambda * mu < 0
-                    [A, B1, B2, R] = fkt_Sattel(VJ,DJ,xWert,yWert,2,5);
+                    [A, B1, B2, R] = fkt_Sattel(VJ,DJ,xWert,yWert,5,0.05);
                 else
                     if lambda > 0
                         %instabil
-                        [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,2,5);
-                        R = -1;
+                        [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,0.66,0.1);
+                        R = 1;
                     else
                         %stabil
-                        [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,2,5);
-                        R = 1;
+                        [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,0.2,0.0001);
+                        R = -1;
                     end
                 end
                 
             else %lambda imaginaer
                 if abs(real(lambda)) < 0.001
-                    A = fkt_Zentrum(xWert,yWert,1);
+                    A = fkt_Zentrum(xWert,yWert,2);
                     R = 1;
                     B1 = 0;
                     B2 = 0;
                 else
                     if real(lambda) > 0
                         %instabil
-                        A = fkt_Strudel(xWert,yWert,0.05);
-                        R = -1;
+                        A = fkt_Strudel(xWert,yWert,0.1);
+                        R = 1;
                         B1 = 0;
                         B2 = 0;
                     else
                         %stabil
-                        A = fkt_Strudel(xWert,yWert,0.05);
-                        R = 1;
+                        A = fkt_Strudel(xWert,yWert,0.1);
+                        R = -1;
                         B1 = 0;
                         B2 = 0;
                     end
