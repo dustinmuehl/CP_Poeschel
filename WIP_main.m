@@ -161,7 +161,7 @@ plot(solx2, soly2, 'o');
 hold on
 %Loesungen und Eigenraume 
 %(fehlt noch: Spezifikation im Fall Sattel)
-for i = 1:size(solx2,1)
+for i = 1:size(solx2,2)
     Matrix = subs(B, x, solx2(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx2(i), soly2(i));
     %Startwerte plotten
@@ -172,7 +172,7 @@ for i = 1:size(solx2,1)
     end
     
     for j = 1:size(AWerte,2) 
-        [t,y] = ode45(fun1,[0 20*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
+        [t,y] = ode45(fun1,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
         plot(y(:,1),y(:,2), FC)
     end
     
@@ -440,28 +440,31 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     if mu == lambda
         if mu * lambda == 0
             [A, B1, B2, R] = fkt_Scherung(xWert, yWert, 2);
+            Sc=1
         else
             if lambda > 0
                 if rank(VJ) == 1
                     %entartet, instab Knoten, nicht diagonalisierbar
                     [A, B1, B2] = fkt_ent_Knoten(VJ,DJ,xWert,yWert,0.2,0.05);
                     R = 1;
-                    
+                    ieK
                 else
                     %entartet, instab Knoten, diagonalisierbar 
                     [A, B1, B2] = fkt_Stern(xWert, yWert);
                     R = 1;
+                    iSt=1
                 end
             else
                 if rank(VJ) == 1
                     %entartet, stab Knoten, nicht diagonalisierbar
                     [A, B1, B2] = fkt_ent_Knoten(VJ,DJ,xWert,yWert,0.2,0.05);
                     R = -1;
-                   
+                    seK=1
                 else
                     %entartet, stab Knoten, diagonalisierbar
                     [A, B1, B2] = fkt_Stern(xWert, yWert);
                     R = -1;
+                    sSt=1
                 end
             end
         end
@@ -496,15 +499,18 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
             if abs(imag(lambda)) < 0.001
                 if lambda * mu < 0
                     [A, B1, B2, R] = fkt_Sattel(VJ,DJ,xWert,yWert,5,0.05);
+                    Sa=1
                 else
                     if lambda > 0
                         %instabil
                         [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,0.66,0.1);
                         R = 1;
+                        iK=1
                     else
                         %stabil
                         [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,0.2,0.0001);
                         R = -1;
+                        sK=1
                     end
                 end
                 
@@ -521,12 +527,14 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
                         R = 1;
                         B1 = 0;
                         B2 = 0;
+                        iS=1
                     else
                         %stabil
                         A = fkt_Strudel(xWert,yWert,0.1);
                         R = -1;
                         B1 = 0;
                         B2 = 0;
+                        sS=1
                     end
                 end
             end
