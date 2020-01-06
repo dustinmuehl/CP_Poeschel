@@ -1,5 +1,5 @@
 function [A,B1,B2]=fkt_Knoten(VJ,WJ,xValue,yValue,k,r)
-    if abs(WJ(1,1))>abs(WJ(2,2))
+    if WJ(1,1)>WJ(2,2)
     a1 = [xValue+k*VJ(1,1)+r yValue+k*VJ(2,1)+r];
     a2 = [xValue+k*VJ(1,1)-r yValue+k*VJ(2,1)-r];
     a3 = [xValue-k*VJ(1,1)+r yValue-k*VJ(2,1)+r];
