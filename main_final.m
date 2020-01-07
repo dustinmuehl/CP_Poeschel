@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File    : main_code.m                                                   %
 %                                                                         %
-% Authors : Moritz Amann , Dustin MÃ¼hlhÃ¤user, Ilya Shapiro                % 
+% Authors : Moritz Amann , Dustin Mühlhäuser, Ilya Shapiro                % 
 %           Benedikt Leibinger, Isabell Giers                             %   
 % Date    : 22.12.2019                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% AufrÃ¤umen
+% Aufräumen
 clc
 clear
 close all
@@ -14,13 +14,13 @@ close all
 %%
 %Input
 %Input Parameter
-p1 = 2;
+p1 = -1;
 w1 = 1;
 p2 = 3;
-m1 = 3;
-m2 = 1;
+m1 = -5;
+m2 = 5;
 
-%Input DGLÂ´s
+%Input DGL´s
 syms x y
 dgl1 = [y; y*(-p1)+x*(-w1)];
 dgl2 = [y; -sin(x) - p2 *y];
@@ -29,13 +29,13 @@ dgl4 = [-x*(x^2+(m2)^2-3)*(x^2+3*x-m2); -y];
 
 
 
-%symbolische Bildung der zugehÃ¶rigen Jacobi-Matrizen
+%symbolische Bildung der zugehörigen Jacobi-Matrizen
 A = jacobian(dgl1, [x, y]);
 B = jacobian(dgl2, [x, y]);
 C = jacobian(dgl3, [x, y]);
 D = jacobian(dgl4, [x, y]);
 
-%zugehÃ¶rige EV und EW der Jacobi fÃ¼r Klassifikation
+%zugehörige EV und EW der Jacobi für Klassifikation
 [VA, DA] = eig(A);
 [VB, DB] = eig(B);
 [VC, DC] = eig(C);
@@ -114,10 +114,12 @@ hold on
 
 %Loesungen und Eigenraume 
 for i = 1:size(solx1,1)
+if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001 
+    %GW Punkte nicht komplex
     Matrix = subs(A, x, solx1(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx1(i), soly1(i));
     %Startwerte plotten
-    if Farbe == -1       %konvergiert nach auÃŸen
+    if Farbe == -1       %konvergiert nach außen
         FC = 'r';
         PF = 'or';
     elseif Farbe == 1  %divergiert nach innen
@@ -147,6 +149,9 @@ for i = 1:size(solx1,1)
         plot(y(:,1),y(:,2), FC)
     end
     end
+else
+    %wenn GW komplex, tue nichts
+end
 end
 
 %zweiter Plot
@@ -162,6 +167,8 @@ hold on
 
 %Loesungen und Eigenraume 
 for i = 1:size(solx2,2)
+if abs(imag(solx2(i)))<0.0001 && abs(imag(soly2(i)))<0.0001 
+    %GW Punkte nicht komplex
     Matrix = subs(B, x, solx2(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx2(i), soly2(i)); 
     
@@ -197,6 +204,9 @@ for i = 1:size(solx2,2)
         plot(y(:,1),y(:,2), FC)
     end
     end
+else
+    %wenn GW komplex, tue nichts
+end    
 end
 
 %dritter Plot
@@ -210,8 +220,10 @@ hold on
 % plot(solx3, soly3, 'o');
 hold on
 
-%Loesungen und Eigenraume
+%Loesungen und Eigenraume 
 for i = 1:size(solx3,1)
+if abs(imag(solx3(i)))<0.001 && abs(imag(soly3(i)))<0.001 
+    %GW Punkte nicht komplex
     Matrix = subs(C, x, solx3(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx3(i), soly3(i));
     %Startwerte plotten
@@ -246,6 +258,9 @@ for i = 1:size(solx3,1)
         plot(y(:,1),y(:,2), FC)
     end
     end
+else
+    %wenn GW komplex, tue nichts
+end      
 end
 
 
@@ -260,9 +275,10 @@ hold on
 %GG-Punkte
 % plot(solx4, soly4, 'o');
 hold on
-
 %Loesungen und Eigenraume 
 for i = 1:size(solx4,1)
+if abs(imag(solx4(i)))<0.0001 && abs(imag(soly4(i)))<0.0001 
+    %GW Punkte nicht komplex
     Matrix = subs(D, x, solx4(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx4(i), soly4(i));
     %Startwerte plotten
@@ -297,8 +313,10 @@ for i = 1:size(solx4,1)
         plot(y(:,1),y(:,2), FC)
     end
     end
+else
+    %wenn GW komplex, tue nichts
+end    
 end
-
 
 %%
 %Funktionen
@@ -361,7 +379,7 @@ function [A, B1, B2] = fkt_Stern(VJ,xValue,yValue,d)
     a4 = [xValue-d*EV1(1)-d*EV2(1); yValue-d*EV1(2)-d*EV2(2)];
 
     A = [a1 a2 a3 a4];
-    % EigenrÃ¤ume
+    % Eigenräume
     B1 = [xValue-3*EV1(1) xValue+3*EV1(1); 
           yValue-3*EV1(2) yValue+3*EV1(2)]; 
     B2 = [xValue-3*EV2(1) xValue+3*EV2(1); 
@@ -407,7 +425,7 @@ function [A,B1,B2]=fkt_Knoten(VJ,WJ,xValue,yValue,a,k,d)
     EV1=(VJ(:,1)/norm(VJ(:,1)));
     EV2=(VJ(:,2)/norm(VJ(:,2)));    
 
-    if WJ(1,1)>WJ(2,2)
+    if abs(WJ(1,1))<abs(WJ(2,2))
       a1 = [xValue+k*EV1(1)+d*EV2(1); yValue+k*EV1(2)+d*EV2(2)];
       a2 = [xValue+k*EV1(1)-d*EV2(1); yValue+k*EV1(2)-d*EV2(2)];
       a3 = [xValue-k*EV1(1)+d*EV2(1); yValue-k*EV1(2)+d*EV2(2)];
@@ -474,7 +492,6 @@ function [A] = fkt_Strudel(xValue,yValue,r)
         A = [a1 a2 a3 a4];
 end
 
-
 %%
 %Klassifikation
 
@@ -484,7 +501,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     lambda = DJ(1,1);
     mu = DJ(2,2);
     
-    %Ã¼berprÃ¼fe, ob Jacobische ~=0
+    %überprüfe, ob Jacobische ~=0
     if norm(J)==0
         A = 0;
         B1 = 0;
@@ -497,7 +514,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
             B1 = 0;
             B2 = 0;
             R = 1;
-            Sc=1
+            %Sc=1
         else
             if lambda > 0
                 if rank(VJ) == 1
@@ -509,19 +526,19 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
                     %entartet, instab Knoten, diagonalisierbar 
                     [A, B1, B2] = fkt_Stern(VJ,xWert, yWert, 2);
                     R = -1;
-                    iSt=1
+                    %iSt=1
                 end
             else
                 if rank(VJ) == 1
                     %entartet, stab Knoten, nicht diagonalisierbar
                     [A, B1, B2] = fkt_ent_Knoten(VJ,DJ,xWert,yWert,1.5,1.5,2);
                     R = 1;
-                    seK=1
+                    %seK=1
                 else
                     %entartet, stab Knoten, diagonalisierbar
                     [A, B1, B2] = fkt_Stern(VJ,xWert, yWert, 2);
                     R = 1;
-                    sSt=1
+                    %sSt=1
                 end
             end
         end
@@ -553,20 +570,20 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
         else
             if abs(imag(lambda)) < 0.001
                 if lambda * mu < 0
-                    [A, B1, B2] = fkt_Sattel(VJ,DJ,xWert,yWert,0.3,0.1,4);
+                    [A, B1, B2] = fkt_Sattel(VJ,DJ,xWert,yWert,0.3,0.1,3);
                     R = 1.0001;
-                    Sa=1
+                    %Sa=1
                 else
                     if lambda > 0
                         %instabil
                         [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,1.5,1.5,2);
                         R = -1;
-                        iK=1
+                        %iK=1
                     else
                         %stabil
                         [A, B1, B2] = fkt_Knoten(VJ,DJ,xWert,yWert,1.5,1.5,2);
                         R = 1;
-                        sK=1
+                        %sK=1
                     end
                 end
                 
@@ -590,14 +607,14 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
                         R = -1;
                         B1 = 0;
                         B2 = 0;
-                        iS=1
+                        %iS=1
                     else
                         %stabil
                         A = fkt_Strudel(xWert,yWert,2);
                         R = 1;
                         B1 = 0;
                         B2 = 0;
-                        sS=1
+                        %sS=1
                     end
                 end
             end
