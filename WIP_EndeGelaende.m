@@ -116,7 +116,7 @@ title('DGL 1')
 axis([-10 10 -10 10])
 hold on
 %GG-Punkte
-plot(solx1, soly1, 'o');
+%plot(solx1, soly1, 'o');
 hold on
 %Loesungen und Eigenraume 
 %(fehlt noch: Spezifikation im Fall Sattel)
@@ -126,9 +126,12 @@ for i = 1:size(solx1,1)
     %Startwerte plotten
     if Farbe == 1       %konvergiert nach innen
         FC = 'r';
+        PF = 'or';
     elseif Farbe == -1  %divergiert nach ausssen
         FC = 'g';
+        PF = 'og';
     end
+    plot(solx1(i), soly1(i), PF)
     
     %Eigenraeume plotten falls notwendig
     if ERaum1 ~= 0
@@ -160,7 +163,7 @@ title('DGL 2')
 axis([-10 10 -10 10])
 hold on
 %GG-Punkte
-plot(solx2, soly2, 'o');
+%plot(solx2, soly2, 'o');
 hold on
 %Loesungen und Eigenraume 
 
@@ -171,10 +174,14 @@ for i = 1:size(solx2,2)
     %Startwerte plotten
     if Farbe == 1       %konvergiert nach innen
         FC = 'r';
+        PF = 'or';
     elseif Farbe == -1  %divergiert nach ausssen
         FC = 'g';
+        PF = 'og';
     end
  
+    plot(solx2(i), soly2(i), PF);
+    
     %Eigenraeume plotten falls notwendig
     if ERaum1 ~= 0
         plot(ERaum1(1,:),ERaum1(2,:), 'b','LineWidth',1.0)
@@ -200,7 +207,7 @@ title('DGL 3')
 axis([-10 10 -10 10])
 hold on
 %GG-Punkte
-plot(solx3, soly3, 'o');
+% plot(solx3, soly3, 'o');
 hold on
 %Loesungen und Eigenraume 
 %(fehlt noch: Spezifikation im Fall Sattel)
@@ -210,9 +217,13 @@ for i = 1:size(solx3,1)
     %Startwerte plotten
     if Farbe == 1       %konvergiert nach innen
         FC = 'r';
+        PF = 'or';
     elseif Farbe == -1  %divergiert nach ausssen
         FC = 'g';
+        PF = 'og';
     end
+    
+    plot(solx3(i), soly3(i), PF)
     
     %Eigenraeume plotten falls notwendig
     if ERaum1 ~= 0
@@ -242,7 +253,7 @@ title('DGL 4')
 axis([-10 10 -10 10])
 hold on
 %GG-Punkte
-plot(solx4, soly4, 'o');
+% plot(solx4, soly4, 'o');
 hold on
 %Loesungen und Eigenraume 
 for i = 1:size(solx4,1)
@@ -251,10 +262,13 @@ for i = 1:size(solx4,1)
     %Startwerte plotten
     if Farbe == 1       %konvergiert nach innen
         FC = 'r';
+        PF = 'or';
     elseif Farbe == -1  %divergiert nach ausssen
         FC = 'g';
+        PF = 'og';
     end
     
+    plot(solx4(i), soly4(i), PF)
     
     %Eigenraeume plotten falls notwendig
     if ERaum1 ~= 0
