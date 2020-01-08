@@ -1,51 +1,57 @@
+%Löschen aller Werte
 clc
 clear all
 
-
-%%DGL1
-%Input DGL1
-p1 = 1:1:1;
-w1 = 1:1:4;
+%% DGL
+%Input DGL
+p = 1:1:1;
+w = 1:1:5;
 
 %Erzeugung des Videos 
-v1 = VideoWriter('DGL1.avi','Motion JPEG AVI');
-v1.Quality = 100;
+v = VideoWriter('DGL.avi','Motion JPEG AVI');
+v.Quality = 100;
 %Oeffnen des Videos 
-open(v1);
+open(v);
 
-for l = 1:length(p1)
-    for k = 1:length(w1)
+for l = 1:length(p)
+    for k = 1:length(w)
+        
         %Input DGL´s
         syms x y
-        dgl1 = [y; y*(-p1(l))+x*(-w1(k))];
+       dgl = [y; y*(-p(l))+x*(-w(k))];% w und p als Parameter anpassen
+%       dgl = [y; -sin(x) - p(l) *y]; %p als Parameter anpassen 
+%       dgl = [w(k)*x-x^3; -y];%w als Parameter anpassen
+%       dgl = [-x*(x^2+(w(k))^2-3)*(x^2+3*x-w(k)); -y]; %w als Parameter
+%                                                               anpassen
+        
         %symbolische Bildung der zugehörigen Jacobi-Matrizen
-        A = jacobian(dgl1, [x, y]);
+        A = jacobian(dgl, [x, y]);
         %zugehörige EV und EW der Jacobi für Klassifikation
         [VA, DA] = eig(A);
         %Umwandlung DGL in functionhandle damit ode45 die Eingabe der DGL nutzen kann
         syms t
-        fun1 = matlabFunction(dgl1,'Vars',{t,[x;y]});
+        fun1 = matlabFunction(dgl,'Vars',{t,[x;y]});
         %Gleichgewichtspunkte
         syms x y
-        dgl1(x,y)= dgl1;
-        S1 = solve(dgl1(x,y)==0, [x y], 'ReturnConditions', true);
+        dgl(x,y)= dgl;
+        S = solve(dgl(x,y)==0, [x y], 'ReturnConditions', true);
         %gibt die Koordinaten der Gleichgewichtspunkte (bis zu fuenf), setzt dabei
         %die Werte -2 bis 2 fuer eventuelle Parameter ein
-        solx1 = subs(S1.x, S1.parameters, [-2 -1 0 1 2]);
-        soly1 = subs(S1.y, S1.parameters, [-2 -1 0 1 2]);
+        solx1 = subs(S.x, S.parameters, [-2 -1 0 1 2]);
+        soly1 = subs(S.y, S.parameters, [-2 -1 0 1 2]);
         %erstellt Gitter, setzt Punkte in DGLs ein
         [X,Y] = meshgrid(-10:1:10,-10:1:10);
-        d1=dgl1(X,Y);
+        d=dgl(X,Y);
         %normieren (durch die geschweiften Klammern wird die erste bzw. zweite
         %Gleichung des Systems aufgerufen)
-        dX1n = d1{1}./sqrt(d1{1}.^2+d1{2}.^2);
-        dY1n = d1{2}./sqrt(d1{1}.^2+d1{2}.^2);
-        %Richtungsfeld
-        subplot(2,2,1),q1=quiver(X,Y,dX1n,dY1n, 0.5);
-        q1.Color = '#DEDEDE';
-        q1.ShowArrowHead = 'off';
+        dXn = d{1}./sqrt(d{1}.^2+d{2}.^2);
+        dYn = d{2}./sqrt(d{1}.^2+d{2}.^2);
+        %Richtungsfeld 
+        q = quiver(X,Y,dXn,dYn, 0.5);
+        q.Color = '#DEDEDE';
+        q.ShowArrowHead = 'off';
         title('DGL')
-        axis([-5 5 -5 5])
+        axis([-10 10 -10 10])
         hold on
         %Loesungen und Eigenraume 
         for i = 1:size(solx1,1)
@@ -88,314 +94,17 @@ for l = 1:length(p1)
             %wenn GW komplex, tue nichts
         end
         end
-        hold off 
+        set(gcf, 'Position', get(0, 'Screensize'));
+        hold off
         drawnow
-        pause(1);
         currFrame = getframe;
-        writeVideo(v1,currFrame);
-
+        writeVideo(v,currFrame);
     end 
 end 
 
 %Beenden des Videos 
-close(v1);
+close(v);
 
-%% DGL2
-%Input DGL2
-p2 = 0:1:6;
-
-%Erzeugung des Videos 
-v2 = VideoWriter('DGL2.avi','Motion JPEG AVI');
-v2.Quality = 100;
-%Oeffnen des Videos 
-open(v2);
-
-for l = 1:length(p2)
-    %Input DGL
-    syms x y
-    dgl2 = [y; -sin(x) - p2(l) *y];
-    %symbolische Bildung der zugehörigen Jacobi-Matrizen
-    B = jacobian(dgl2, [x, y]);
-    %zugehörige EV und EW der Jacobi für Klassifikation
-    [VB, DB] = eig(B);
-    %Umwandlung DGL in functionhandle damit ode45 die Eingabe der DGL nutzen kann
-    syms t
-    fun2 = matlabFunction(dgl2,'Vars',{t,[x;y]});
-    %Gleichgewichtspunkte
-    syms x y
-    dgl2(x,y)= dgl2;
-    
-    S2 = solve(dgl2(x,y)==0, [x y], 'ReturnConditions', true);
-    
-    %gibt die Koordinaten der Gleichgewichtspunkte (bis zu fuenf), setzt dabei
-    %die Werte -2 bis 2 fuer eventuelle Parameter ein
-    solx2 = subs(S2.x, S2.parameters, [-2 -1 0 1 2]);
-    soly2 = subs(S2.y, S2.parameters, [-2 -1 0 1 2]);
-    
-    %erstellt Gitter, setzt Punkte in DGLs ein
-    [X,Y] = meshgrid(-10:1:10,-10:1:10);
-    d2=dgl2(X,Y);
-    
-    %normieren (durch die geschweiften Klammern wird die erste bzw. zweite
-    %Gleichung des Systems aufgerufen)
-    dX2n = d2{1}./sqrt(d2{1}.^2+d2{2}.^2);
-    dY2n = d2{2}./sqrt(d2{1}.^2+d2{2}.^2);
-    
-        %zweiter Plot
-    subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
-    q1.Color = '#DEDEDE';
-    q1.ShowArrowHead = 'off';
-    title('DGL 2')
-    axis([-10 10 -10 10])
-    hold on
-    %GG-Punkte
-    %plot(solx2, soly2, 'o');
-    hold on
-
-    %Loesungen und Eigenraume 
-    for i = 1:size(solx2,2)
-    if abs(imag(solx2(i)))<0.0001 && abs(imag(soly2(i)))<0.0001 
-        %GW Punkte nicht komplex
-        Matrix = subs(B, x, solx2(i));
-        [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx2(i), soly2(i)); 
-
-        %Startwerte plotten
-        if Farbe == -1       %divergiert nach aussen
-            FC = 'r';
-            PF = 'or';
-        elseif Farbe == 1  %konvergiert nach innen
-            FC = 'g';
-            PF = 'og';
-        elseif Farbe == 1.0001 %neutral
-            FC = 'b';
-            PF = 'ob';
-        end
-
-        %Kreis um Loesung plotten
-        plot(solx2(i), soly2(i), PF);
-
-        if Farbe==0
-        %wenn Jacobische 0, dann tue nichts    
-        else
-        %Eigenraeume plotten falls notwendig
-        if ERaum1 ~= 0
-            plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
-        end
-        if ERaum2 ~= 0
-            plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
-        end
-
-        %Loesung plotten
-        for j = 1:size(AWerte,2) 
-            [t,y] = ode45(fun2,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
-            plot(y(:,1),y(:,2), FC)
-        end
-        end
-    else
-        %wenn GW komplex, tue nichts
-    end    
-    end
-hold off 
-drawnow
-pause(1);
-currFrame = getframe;
-writeVideo(v2,currFrame);
-
-end 
-
-%Beenden des Videos 
-close(v2);
-
-%% DGL3
-%Input DGL3 
-m1 = -5:1:-1;
-
-%Erzeugung des Videos 
-v3 = VideoWriter('DGL3.avi','Motion JPEG AVI');
-v3.Quality = 100;
-%Oeffnen des Videos 
-open(v3);
-
-for l = 1:length(m1)
-    syms x y
-    dgl3 = [m1(l)*x-x^3; -y];
-    %symbolische Bildung der zugehörigen Jacobi-Matrizen
-    C = jacobian(dgl3, [x, y]);
-    %zugehörige EV und EW der Jacobi für Klassifikation
-    [VC, DC] = eig(C);
-    %Umwandlung DGL in functionhandle damit ode45 die Eingabe der DGL nutzen kann
-    syms t
-    fun3 = matlabFunction(dgl3,'Vars',{t,[x;y]});
-    %Gleichgewichtspunkte
-    dgl3(x,y)= dgl3;
-    S3 = solve(dgl3(x,y)==0, [x y], 'ReturnConditions', true);
-    solx3 = subs(S3.x, S3.parameters, [-2 -1 0 1 2]);
-    soly3 = subs(S3.y, S3.parameters, [-2 -1 0 1 2]);
-    %erstellt Gitter, setzt Punkte in DGLs ein
-    [X,Y] = meshgrid(-10:1:10,-10:1:10);
-    d3=dgl3(X,Y);
-    dX3n = d3{1}./sqrt(d3{1}.^2+d3{2}.^2);
-    dY3n = d3{2}./sqrt(d3{1}.^2+d3{2}.^2);
-    
-        %dritter Plot
-    subplot(2,2,3),q1=quiver(X,Y,dX3n,dY3n, 0.5);
-    q1.Color = '#DEDEDE';
-    q1.ShowArrowHead = 'off';
-    title('DGL 3')
-    axis([-5 5 -5 5])
-    hold on
-    %GG-Punkte
-    % plot(solx3, soly3, 'o');
-    hold on
-
-    %Loesungen und Eigenraume 
-    for i = 1:size(solx3,1)
-    if abs(imag(solx3(i)))<0.001 && abs(imag(soly3(i)))<0.001 
-        %GW Punkte nicht komplex
-        Matrix = subs(C, x, solx3(i));
-        [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx3(i), soly3(i));
-        %Startwerte plotten
-        if Farbe == -1       %divergiert nach aussen
-            FC = 'r';
-            PF = 'or';
-        elseif Farbe == 1  %konvergiert nach innen
-            FC = 'g';
-            PF = 'og';
-        elseif Farbe == 1.0001 %neutral
-            FC = 'b';
-            PF = 'ob';
-        end
-
-        %Kreis um Loesung plotten
-        plot(solx3(i), soly3(i), PF)
-
-        if Farbe==0
-        %wenn Jacobische 0, dann tue nichts    
-        else
-        %Eigenraeume plotten falls notwendig
-        if norm(ERaum1) ~= 0
-            plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
-        end
-        if norm(ERaum2) ~= 0
-            plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
-        end
-
-        %Loesung plotten
-        for j = 1:size(AWerte,2)
-            [t,y] = ode45(fun3,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
-            plot(y(:,1),y(:,2), FC)
-        end
-        end
-    else
-        %wenn GW komplex, tue nichts
-    end      
-    end
-hold off 
-drawnow
-pause(1);
-currFrame = getframe;
-writeVideo(v3,currFrame);
-end 
-
-%Beenden des Videos 
-close(v3);
-%% DGL4 
-%Input DGL4 
-m2 = 1:1:5;
-
-%Erzeugung des Videos 
-v4 = VideoWriter('DGL4.avi','Motion JPEG AVI');
-v4.Quality = 100;
-%Oeffnen des Videos 
-open(v4);
-
-for k = 1:length(m2)
-    syms x y 
-    dgl4 = [-x*(x^2+(m2(k))^2-3)*(x^2+3*x-m2(k)); -y];
-    %symbolische Bildung der zugehörigen Jacobi-Matrizen
-    D = jacobian(dgl4, [x, y]);
-    %zugehörige EV und EW der Jacobi für Klassifikation
-    [VD, DD] = eig(D);
-    %Umwandlung DGL in functionhandle damit ode45 die Eingabe der DGL nutzen kann
-    syms t
-    fun4 = matlabFunction(dgl4,'Vars',{t,[x;y]});
-    %Gleichgewichtspunkte
-    syms x y
-    dgl4(x,y)= dgl4;
-    S4 = solve(dgl4(x,y)==0, [x y], 'ReturnConditions', true);
-    %gibt die Koordinaten der Gleichgewichtspunkte (bis zu fuenf), setzt dabei
-    %die Werte -2 bis 2 fuer eventuelle Parameter ein
-    solx4 = subs(S4.x, S4.parameters, [-2 -1 0 1 2]);
-    soly4 = subs(S4.y, S4.parameters, [-2 -1 0 1 2]);
-    %erstellt Gitter, setzt Punkte in DGLs ein
-    [X,Y] = meshgrid(-10:1:10,-10:1:10);
-    d4=dgl4(X,Y);
-    %normieren (durch die geschweiften Klammern wird die erste bzw. zweite
-    %Gleichung des Systems aufgerufen)
-    dX4n = d4{1}./sqrt(d4{1}.^2+d4{2}.^2);
-    dY4n = d4{2}./sqrt(d4{1}.^2+d4{2}.^2);
-    %vierter Plot
-    subplot(2,2,4),q1=quiver(X,Y,dX4n,dY4n, 0.5);
-    q1.Color = '#DEDEDE';
-    q1.ShowArrowHead = 'off';
-    title('DGL 4')
-    axis([-5 5 -5 5])
-    hold on
-    %GG-Punkte
-    % plot(solx4, soly4, 'o');
-    hold on
-    %Loesungen und Eigenraume 
-    for i = 1:size(solx4,1)
-    if abs(imag(solx4(i)))<0.0001 && abs(imag(soly4(i)))<0.0001 
-        %GW Punkte nicht komplex
-        Matrix = subs(D, x, solx4(i));
-        [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx4(i), soly4(i));
-        %Startwerte plotten
-        if Farbe == -1       %divergiert nach aussen
-            FC = 'r';
-            PF = 'or';
-        elseif Farbe == 1  %konvergiert nach innen
-            FC = 'g';
-            PF = 'og';
-        elseif Farbe == 1.0001 %neutral
-            FC = 'b';
-            PF = 'ob';
-        end
-
-        %Kreis um Loesung plotten 
-        plot(solx4(i), soly4(i), PF)
-
-        if Farbe==0
-        %wenn Jacobische 0, dann tue nichts    
-        else
-        %Eigenraeume plotten falls notwendig
-        if norm(ERaum1) ~= 0
-            plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
-        end
-        if norm(ERaum2) ~= 0
-            plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
-        end
-
-        %Loesung plotten
-        for j = 1:size(AWerte,2)
-            [t,y] = ode45(fun4,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
-            plot(y(:,1),y(:,2), FC)
-        end
-        end
-    else
-        %wenn GW komplex, tue nichts
-    end    
-    end
-hold off 
-drawnow
-pause(1);
-currFrame = getframe;
-writeVideo(v4,currFrame);
-
-end 
-
-%Beenden des Videos 
-close(v4);
 %% Funktionen
 %Funktionen
 
