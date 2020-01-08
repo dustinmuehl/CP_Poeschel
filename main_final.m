@@ -14,11 +14,11 @@ close all
 %%
 %Input
 %Input Parameter
-p1 = -1;
+p1 = 3;
 w1 = 1;
 p2 = 3;
-m1 = -5;
-m2 = 5;
+m1 = 2;
+m2 = 2;
 
 %Input DGL´s
 syms x y
@@ -131,28 +131,29 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
     end
     
     %Kreis um Loesung plotten
-    plot(solx1(i), soly1(i), PF)
+    u1 = plot(solx1(i), soly1(i), PF);
     
     if Farbe==0
     %wenn Jacobische 0, dann tue nichts    
     else
     %Eigenraeume plotten falls notwendig
     if ERaum1 ~= 0
-        plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
+        u2 = plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0);
     end
     if ERaum2 ~= 0
-        plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
+        u2 = plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
     end
     %Loesung plotten
     for j = 1:size(AWerte,2)
         [t,y] = ode45(fun1,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
-        plot(y(:,1),y(:,2), FC)
+        u3 = plot(y(:,1),y(:,2), FC);
     end
     end
 else
     %wenn GW komplex, tue nichts
 end
 end
+legend([u1 u3 u2],{'GGPunkt: grün(stabil), rot(instabil), blau(Sattel)', 'Lösung: grün(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southeast')
 
 %zweiter Plot
 subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
