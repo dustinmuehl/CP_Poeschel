@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File    : main_code.m                                                   %
 %                                                                         %
-% Authors : Moritz Amann , Dustin Mühlhäuser, Ilya Shapiro                % 
+% Authors : Moritz Amann , Dustin Muehlhaeuser, Ilya Shapiro              % 
 %           Benedikt Leibinger, Isabell Giers                             %   
 % Date    : 22.12.2019                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,8 @@ subplot(2,2,1),q1=quiver(X,Y,dX1n,dY1n, 0.5);
 q1.Color = '#DEDEDE';
 q1.ShowArrowHead = 'off';
 title('DGL 1')
-axis([-5 5 -5 5])
+axis([-10 10 -5 5])
+set(get(groot,'Children'),'WindowState','maximized');
 hold on
 %GG-Punkte
 %plot(solx1, soly1, 'o');
@@ -137,12 +138,17 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
     %wenn Jacobische 0, dann tue nichts    
     else
     %Eigenraeume plotten falls notwendig
+        
     if ERaum1 ~= 0
-        u2 = plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0);
+        plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0);
     end
     if ERaum2 ~= 0
-        u2 = plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
+        plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
     end
+    
+    %für Legende: Fiktiven Eigenraum zeichen
+        u2 = plot([50,50],[51,51],'k','Linewidth',1.0);
+    
     %Loesung plotten
     for j = 1:size(AWerte,2)
         [t,y] = ode45(fun1,[0 5*Farbe],[double(AWerte(1,j)) double(AWerte(2,j))]);
@@ -153,7 +159,8 @@ else
     %wenn GW komplex, tue nichts
 end
 end
-legend([u1 u3 u2],{'GGPunkt: grün(stabil), rot(instabil), blau(Sattel)', 'Lösung: grün(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southeast')
+
+legend([u1 u3 u2],{'GGPunkt: grün(stabil), rot(instabil), blau(Sattel)', 'Lösung: grün(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southoutside')
 
 %zweiter Plot
 subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
