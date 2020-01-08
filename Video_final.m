@@ -343,7 +343,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
             else
                 if mu > 0
                     %lineare Expansion mit lambda=0
-                    [A, B1, B2] = fkt_lin_Konten(VJ(:,1),VJ(:,2),xWert, yWert,1,2);
+                    [A, B1, B2] = fkt_lin_Knoten(VJ(:,1),VJ(:,2),xWert, yWert,1,2);
                     R = -1;
                 else 
                     %lineare Kontraktion
