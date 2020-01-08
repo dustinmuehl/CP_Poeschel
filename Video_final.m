@@ -1,4 +1,4 @@
-%Löschen aller Werte
+%LÃ¶schen aller Werte
 clc
 clear all
 
@@ -16,7 +16,7 @@ open(v);
 for l = 1:length(p)
     for k = 1:length(w)
         
-        %Input DGL´s
+        %Input DGLÂ´s
         syms x y
 %       dgl = [y; y*(-p(l))+x*(-w(k))];% w und p als Parameter anpassen
        dgl = [y; -sin(x) - p(l) *y]; %p als Parameter anpassen 
@@ -24,9 +24,9 @@ for l = 1:length(p)
 %       dgl = [-x*(x^2+(w(k))^2-3)*(x^2+3*x-w(k)); -y]; %w als Parameter
 %                                                               anpassen
         
-        %symbolische Bildung der zugehörigen Jacobi-Matrizen
+        %symbolische Bildung der zugehÃ¶rigen Jacobi-Matrizen
         A = jacobian(dgl, [x, y]);
-        %zugehörige EV und EW der Jacobi für Klassifikation
+        %zugehÃ¶rige EV und EW der Jacobi fÃ¼r Klassifikation
         [VA, DA] = eig(A);
         %Umwandlung DGL in functionhandle damit ode45 die Eingabe der DGL nutzen kann
         syms t
@@ -60,7 +60,7 @@ for l = 1:length(p)
             Matrix = subs(A, x, solx1(i));
             [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx1(i), soly1(i));
             %Startwerte plotten
-            if Farbe == -1       %konvergiert nach außen
+            if Farbe == -1       %konvergiert nach auÃŸen
                 FC = 'r';
                 PF = 'or';
             elseif Farbe == 1  %divergiert nach innen
@@ -78,10 +78,10 @@ for l = 1:length(p)
             %wenn Jacobische 0, dann tue nichts    
             else
             %Eigenraeume plotten falls notwendig
-            if ERaum1 ~= 0
+            if norm(ERaum1) ~= 0
                 plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
             end
-            if ERaum2 ~= 0
+            if norm(ERaum2) ~= 0
                 plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
             end
             %Loesung plotten
@@ -166,7 +166,7 @@ function [A, B1, B2] = fkt_Stern(VJ,xValue,yValue,d)
     a4 = [xValue-d*EV1(1)-d*EV2(1); yValue-d*EV1(2)-d*EV2(2)];
 
     A = [a1 a2 a3 a4];
-    % Eigenräume
+    % EigenrÃ¤ume
     B1 = [xValue-3*EV1(1) xValue+3*EV1(1); 
           yValue-3*EV1(2) yValue+3*EV1(2)]; 
     B2 = [xValue-3*EV2(1) xValue+3*EV2(1); 
@@ -286,7 +286,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     lambda = DJ(1,1);
     mu = DJ(2,2);
     
-    %überprüfe, ob Jacobische ~=0
+    %Ã¼berprÃ¼fe, ob Jacobische ~=0
     if norm(J)==0
         A = 0;
         B1 = 0;
