@@ -4,8 +4,8 @@ clear all
 
 %% DGL
 %Input DGL
-p = 1:1:1;
-w = 1:1:5;
+p = -1:.5:5;
+w = 1:1:1;
 
 %Erzeugung des Videos 
 v = VideoWriter('DGL.avi','Motion JPEG AVI');
@@ -18,8 +18,8 @@ for l = 1:length(p)
         
         %Input DGL´s
         syms x y
-       dgl = [y; y*(-p(l))+x*(-w(k))];% w und p als Parameter anpassen
-%       dgl = [y; -sin(x) - p(l) *y]; %p als Parameter anpassen 
+%       dgl = [y; y*(-p(l))+x*(-w(k))];% w und p als Parameter anpassen
+       dgl = [y; -sin(x) - p(l) *y]; %p als Parameter anpassen 
 %       dgl = [w(k)*x-x^3; -y];%w als Parameter anpassen
 %       dgl = [-x*(x^2+(w(k))^2-3)*(x^2+3*x-w(k)); -y]; %w als Parameter
 %                                                               anpassen
@@ -54,7 +54,7 @@ for l = 1:length(p)
         axis([-10 10 -10 10])
         hold on
         %Loesungen und Eigenraume 
-        for i = 1:size(solx1,1)
+        for i = 1:numel(solx1)
         if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001 
             %GW Punkte nicht komplex
             Matrix = subs(A, x, solx1(i));
@@ -71,7 +71,7 @@ for l = 1:length(p)
                 PF = 'ob';
             end
 
-            %Kreis um Loesung plotten
+            %Kreis um GW plotten
             plot(solx1(i), soly1(i), PF)
 
             if Farbe==0

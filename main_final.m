@@ -1,12 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File    : main_code.m                                                   %
 %                                                                         %
-% Authors : Moritz Amann , Dustin Muehlhaeuser, Ilya Shapiro              % 
+% Authors : Moritz Amann , Dustin Muehlhaeuser, Ilya Shapiro                % 
 %           Benedikt Leibinger, Isabell Giers                             %   
 % Date    : 22.12.2019                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% AufrÃ¤umen
+% Aufräumen
 clc
 clear
 close all
@@ -14,13 +14,13 @@ close all
 %%
 %Input
 %Input Parameter
-p1 = 3;
+p1 = -1;
 w1 = 1;
-p2 = 3;
+p2 = 1;
 m1 = 2;
-m2 = 2;
+m2 = 1;
 
-%Input DGLÂ´s
+%Input DGL´s
 syms x y
 dgl1 = [y; y*(-p1)+x*(-w1)];
 dgl2 = [y; -sin(x) - p2 *y];
@@ -29,13 +29,13 @@ dgl4 = [-x*(x^2+(m2)^2-3)*(x^2+3*x-m2); -y];
 
 
 
-%symbolische Bildung der zugehÃ¶rigen Jacobi-Matrizen
+%symbolische Bildung der zugehörigen Jacobi-Matrizen
 A = jacobian(dgl1, [x, y]);
 B = jacobian(dgl2, [x, y]);
 C = jacobian(dgl3, [x, y]);
 D = jacobian(dgl4, [x, y]);
 
-%zugehÃ¶rige EV und EW der Jacobi fÃ¼r Klassifikation
+%zugehörige EV und EW der Jacobi für Klassifikation
 [VA, DA] = eig(A);
 [VB, DB] = eig(B);
 [VC, DC] = eig(C);
@@ -47,6 +47,13 @@ fun1 = matlabFunction(dgl1,'Vars',{t,[x;y]});
 fun2 = matlabFunction(dgl2,'Vars',{t,[x;y]});
 fun3 = matlabFunction(dgl3,'Vars',{t,[x;y]});
 fun4 = matlabFunction(dgl4,'Vars',{t,[x;y]});
+
+%if fun1 == [0;0] || fun2 == [0;0] || fun3 == [0;0] || fun4 == [0;0] 
+%    disp('Bitte zulässige DGL eingeben. Es sind nur DGL ungleich Null zulässig.')
+%else
+%    %nichts
+%end
+    
 
 %%
 %Gleichgewichtspunkte
@@ -99,8 +106,9 @@ dY4n = d4{2}./sqrt(d4{1}.^2+d4{2}.^2);
 
 %%
 %Plots
-%Stelle WindowState auf fullscreen
-set(groot, 'defaultFigureWindowState', 'maximized');
+%maximiere Ausgabefenster
+set(groot,'defaultFigureWindowState' ,'maximized');
+
 %erster Plot
 %Richtungsfeld
 subplot(2,2,1),q1=quiver(X,Y,dX1n,dY1n, 0.5);
@@ -109,18 +117,15 @@ q1.ShowArrowHead = 'off';
 title('DGL 1')
 axis([-10 10 -5 5])
 hold on
-%GG-Punkte
-%plot(solx1, soly1, 'o');
-hold on
 
 %Loesungen und Eigenraume 
-for i = 1:size(solx1,1)
+for i = 1:numel(solx1)
 if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001 
     %GW Punkte nicht komplex
     Matrix = subs(A, x, solx1(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx1(i), soly1(i));
     %Startwerte plotten
-    if Farbe == -1       %konvergiert nach auÃŸen
+    if Farbe == -1       %konvergiert nach außen
         FC = 'r';
         PF = 'or';
     elseif Farbe == 1  %divergiert nach innen
@@ -131,7 +136,7 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
         PF = 'ob';
     end
     
-    %Kreis um Loesung plotten
+    %Kreis um GW plotten
     u1 = plot(solx1(i), soly1(i), PF);
     
     if Farbe==0
@@ -146,7 +151,7 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
         plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
     end
     
-    %fÃ¼r Legende: Fiktiven Eigenraum zeichen
+    %für Legende: Fiktiven Eigenraum zeichen
         u2 = plot([50,50],[51,51],'k','Linewidth',1.0);
     
     %Loesung plotten
@@ -160,7 +165,7 @@ else
 end
 end
 
-legend([u1 u3 u2],{'GGPunkt: grÃ¼n(stabil), rot(instabil), blau(Sattel)', 'LÃ¶sung: grÃ¼n(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southoutside')
+legend([u1 u3 u2],{'GGPunkt: grün(stabil), rot(instabil), blau(Sattel)', 'Lösung: grün(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southoutside')
 
 %zweiter Plot
 subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
@@ -169,12 +174,9 @@ q1.ShowArrowHead = 'off';
 title('DGL 2')
 axis([-10 10 -10 10])
 hold on
-%GG-Punkte
-%plot(solx2, soly2, 'o');
-hold on
 
 %Loesungen und Eigenraume 
-for i = 1:size(solx2,2)
+for i = 1:numel(solx2)
 if abs(imag(solx2(i)))<0.0001 && abs(imag(soly2(i)))<0.0001 
     %GW Punkte nicht komplex
     Matrix = subs(B, x, solx2(i));
@@ -192,7 +194,7 @@ if abs(imag(solx2(i)))<0.0001 && abs(imag(soly2(i)))<0.0001
         PF = 'ob';
     end
     
-    %Kreis um Loesung plotten
+    %Kreis um GW plotten
     plot(solx2(i), soly2(i), PF);
 
     if Farbe==0
@@ -224,12 +226,9 @@ q1.ShowArrowHead = 'off';
 title('DGL 3')
 axis([-5 5 -5 5])
 hold on
-%GG-Punkte
-% plot(solx3, soly3, 'o');
-hold on
 
 %Loesungen und Eigenraume 
-for i = 1:size(solx3,1)
+for i = 1:numel(solx3)
 if abs(imag(solx3(i)))<0.001 && abs(imag(soly3(i)))<0.001 
     %GW Punkte nicht komplex
     Matrix = subs(C, x, solx3(i));
@@ -246,7 +245,7 @@ if abs(imag(solx3(i)))<0.001 && abs(imag(soly3(i)))<0.001
         PF = 'ob';
     end
     
-    %Kreis um Loesung plotten
+    %Kreis um GW plotten
     plot(solx3(i), soly3(i), PF)
     
     if Farbe==0
@@ -280,11 +279,9 @@ q1.ShowArrowHead = 'off';
 title('DGL 4')
 axis([-5 5 -5 5])
 hold on
-%GG-Punkte
-% plot(solx4, soly4, 'o');
-hold on
+
 %Loesungen und Eigenraume 
-for i = 1:size(solx4,1)
+for i = 1:numel(solx4)
 if abs(imag(solx4(i)))<0.0001 && abs(imag(soly4(i)))<0.0001 
     %GW Punkte nicht komplex
     Matrix = subs(D, x, solx4(i));
@@ -301,7 +298,7 @@ if abs(imag(solx4(i)))<0.0001 && abs(imag(soly4(i)))<0.0001
         PF = 'ob';
     end
     
-    %Kreis um Loesung plotten 
+    %Kreis um GW plotten 
     plot(solx4(i), soly4(i), PF)
 
     if Farbe==0
@@ -387,7 +384,7 @@ function [A, B1, B2] = fkt_Stern(VJ,xValue,yValue,d)
     a4 = [xValue-d*EV1(1)-d*EV2(1); yValue-d*EV1(2)-d*EV2(2)];
 
     A = [a1 a2 a3 a4];
-    % EigenrÃ¤ume
+    % Eigenräume
     B1 = [xValue-3*EV1(1) xValue+3*EV1(1); 
           yValue-3*EV1(2) yValue+3*EV1(2)]; 
     B2 = [xValue-3*EV2(1) xValue+3*EV2(1); 
@@ -509,7 +506,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     lambda = DJ(1,1);
     mu = DJ(2,2);
     
-    %Ã¼berprÃ¼fe, ob Jacobische ~=0
+    %überprüfe, ob Jacobische ~=0
     if norm(J)==0
         A = 0;
         B1 = 0;
@@ -518,9 +515,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     
     elseif mu == lambda
         if mu * lambda == 0
-            A = fkt_Scherung(VJ, xWert, yWert, 0.66);
-            B1 = 0;
-            B2 = 0;
+            [A,B1,B2] = fkt_Scherung(VJ, xWert, yWert, 0.66);
             R = 1;
             %Sc=1
         else
@@ -566,7 +561,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
             else
                 if mu > 0
                     %lineare Expansion mit lambda=0
-                    [A, B1, B2] = fkt_lin_Konten(VJ(:,1),VJ(:,2),xWert, yWert,1,2);
+                    [A, B1, B2] = fkt_lin_Knoten(VJ(:,1),VJ(:,2),xWert, yWert,1,2);
                     R = -1;
                 else 
                     %lineare Kontraktion
@@ -611,14 +606,14 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
                 else
                     if real(lambda) > 0
                         %instabil
-                        A = fkt_Strudel(xWert,yWert,2);
+                        A = fkt_Strudel(xWert,yWert,1.5);
                         R = -1;
                         B1 = 0;
                         B2 = 0;
                         %iS=1
                     else
                         %stabil
-                        A = fkt_Strudel(xWert,yWert,2);
+                        A = fkt_Strudel(xWert,yWert,1.5);
                         R = 1;
                         B1 = 0;
                         B2 = 0;
