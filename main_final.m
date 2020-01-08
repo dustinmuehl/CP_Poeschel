@@ -6,7 +6,7 @@
 % Date    : 22.12.2019                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Aufräumen
+% AufrÃ¤umen
 clc
 clear
 close all
@@ -20,7 +20,7 @@ p2 = 3;
 m1 = 2;
 m2 = 2;
 
-%Input DGL´s
+%Input DGLÂ´s
 syms x y
 dgl1 = [y; y*(-p1)+x*(-w1)];
 dgl2 = [y; -sin(x) - p2 *y];
@@ -29,13 +29,13 @@ dgl4 = [-x*(x^2+(m2)^2-3)*(x^2+3*x-m2); -y];
 
 
 
-%symbolische Bildung der zugehörigen Jacobi-Matrizen
+%symbolische Bildung der zugehÃ¶rigen Jacobi-Matrizen
 A = jacobian(dgl1, [x, y]);
 B = jacobian(dgl2, [x, y]);
 C = jacobian(dgl3, [x, y]);
 D = jacobian(dgl4, [x, y]);
 
-%zugehörige EV und EW der Jacobi für Klassifikation
+%zugehÃ¶rige EV und EW der Jacobi fÃ¼r Klassifikation
 [VA, DA] = eig(A);
 [VB, DB] = eig(B);
 [VC, DC] = eig(C);
@@ -99,7 +99,8 @@ dY4n = d4{2}./sqrt(d4{1}.^2+d4{2}.^2);
 
 %%
 %Plots
-
+%Stelle WindowState auf fullscreen
+set(groot, 'defaultFigureWindowState', 'maximized');
 %erster Plot
 %Richtungsfeld
 subplot(2,2,1),q1=quiver(X,Y,dX1n,dY1n, 0.5);
@@ -107,7 +108,6 @@ q1.Color = '#DEDEDE';
 q1.ShowArrowHead = 'off';
 title('DGL 1')
 axis([-10 10 -5 5])
-set(get(groot,'Children'),'WindowState','maximized');
 hold on
 %GG-Punkte
 %plot(solx1, soly1, 'o');
@@ -120,7 +120,7 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
     Matrix = subs(A, x, solx1(i));
     [AWerte, ERaum1, ERaum2, Farbe] = fkt_Klassifikation(Matrix, solx1(i), soly1(i));
     %Startwerte plotten
-    if Farbe == -1       %konvergiert nach außen
+    if Farbe == -1       %konvergiert nach auÃŸen
         FC = 'r';
         PF = 'or';
     elseif Farbe == 1  %divergiert nach innen
@@ -146,7 +146,7 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
         plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
     end
     
-    %für Legende: Fiktiven Eigenraum zeichen
+    %fÃ¼r Legende: Fiktiven Eigenraum zeichen
         u2 = plot([50,50],[51,51],'k','Linewidth',1.0);
     
     %Loesung plotten
@@ -160,7 +160,7 @@ else
 end
 end
 
-legend([u1 u3 u2],{'GGPunkt: grün(stabil), rot(instabil), blau(Sattel)', 'Lösung: grün(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southoutside')
+legend([u1 u3 u2],{'GGPunkt: grÃ¼n(stabil), rot(instabil), blau(Sattel)', 'LÃ¶sung: grÃ¼n(stabil), rot(instabil), blau(Sattel)', 'Eigenraum'},'Location','southoutside')
 
 %zweiter Plot
 subplot(2,2,2),q1=quiver(X,Y,dX2n,dY2n, 0.5);
@@ -387,7 +387,7 @@ function [A, B1, B2] = fkt_Stern(VJ,xValue,yValue,d)
     a4 = [xValue-d*EV1(1)-d*EV2(1); yValue-d*EV1(2)-d*EV2(2)];
 
     A = [a1 a2 a3 a4];
-    % Eigenräume
+    % EigenrÃ¤ume
     B1 = [xValue-3*EV1(1) xValue+3*EV1(1); 
           yValue-3*EV1(2) yValue+3*EV1(2)]; 
     B2 = [xValue-3*EV2(1) xValue+3*EV2(1); 
@@ -509,7 +509,7 @@ function [A, B1, B2, R] = fkt_Klassifikation(J, xWert, yWert)
     lambda = DJ(1,1);
     mu = DJ(2,2);
     
-    %überprüfe, ob Jacobische ~=0
+    %Ã¼berprÃ¼fe, ob Jacobische ~=0
     if norm(J)==0
         A = 0;
         B1 = 0;
