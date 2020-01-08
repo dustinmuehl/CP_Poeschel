@@ -143,10 +143,10 @@ if abs(imag(solx1(i)))<0.0001 && abs(imag(soly1(i)))<0.0001
     else
     %Eigenraeume plotten falls notwendig
         
-    if ERaum1 ~= 0
+    if norm(ERaum1) ~= 0
         plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0);
     end
-    if ERaum2 ~= 0
+    if norm(ERaum2) ~= 0
         plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0);
     end
     
@@ -200,10 +200,10 @@ if abs(imag(solx2(i)))<0.0001 && abs(imag(soly2(i)))<0.0001
     %wenn Jacobische 0, dann tue nichts    
     else
     %Eigenraeume plotten falls notwendig
-    if ERaum1 ~= 0
+    if norm(ERaum1) ~= 0
         plot(ERaum1(1,:),ERaum1(2,:), 'k','LineWidth',1.0)
     end
-    if ERaum2 ~= 0
+    if norm(ERaum2) ~= 0
         plot(ERaum2(1,:),ERaum2(2,:), 'k','LineWidth',1.0)
     end
     
